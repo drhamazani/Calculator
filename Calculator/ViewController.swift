@@ -42,10 +42,28 @@ class ViewController: UIViewController {
         
         guard let numValue = sender.currentTitle else { fatalError() }
         
-        if isFinishedTypingNumber {
+        if isFinishedTypingNumber && numValue == "." {
+            displayLabel.text = "0\(numValue)"
+            isFinishedTypingNumber = false
+        } else if isFinishedTypingNumber && numValue == "0" {
+            if displayLabel.text! == "0" {
+                return
+            } else {
+                displayLabel.text = numValue
+                return
+            }
+        } else if isFinishedTypingNumber {
             displayLabel.text = numValue
             isFinishedTypingNumber = false
         } else {
+            if numValue == "." {
+                for character in displayLabel.text! {
+                    if character == "." {
+                        return
+                    }
+                }
+            }
+            
             displayLabel.text?.append(numValue)
         }
     }

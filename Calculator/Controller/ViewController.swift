@@ -26,6 +26,8 @@ class ViewController: UIViewController {
         }
     }
     
+    private var calculator = CalculatorLogic()
+    
     
     @IBAction func calcButtonPressed(_ sender: UIButton) {
         
@@ -33,20 +35,27 @@ class ViewController: UIViewController {
         
         isFinishedTypingNumber = true
         
+        calculator.setNumber(displayValue)
+        
         guard let calculationMethod = sender.currentTitle else { fatalError() }
         
-        if calculationMethod == "AC" {
-            displayValue = 0
-        } else if calculationMethod == "+/-" {
-            isFinishedTypingNumber = false
-            if displayLabel.text!.starts(with: "-") {
-                displayLabel.text!.remove(at: displayLabel.text!.startIndex)
-            } else {
-                displayLabel.text! = "-" + displayLabel.text!
-            }
-        } else if calculationMethod == "%" {
-            displayValue /= 100
+        guard let result = calculator.calculate(symbol: calculationMethod) else {
+            fatalError("The result of the calculation is nil")
         }
+            
+        displayValue = result
+    }
+    
+    @IBAction func changeSignPressed(_ sender: UIButton) {
+        
+        isFinishedTypingNumber = false
+        
+        if displayLabel.text!.starts(with: "-") {
+            displayLabel.text!.remove(at: displayLabel.text!.startIndex)
+        } else {
+            displayLabel.text! = "-" + displayLabel.text!
+        }
+        
     }
     
     @IBAction func numButtonPressed(_ sender: UIButton) {

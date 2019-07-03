@@ -14,6 +14,18 @@ class ViewController: UIViewController {
     
     private var isFinishedTypingNumber: Bool = true
     
+    private var displayValue: Double {
+        get {
+            guard let number = Double(displayLabel.text!) else {
+                fatalError("Cannot convert display label text to a Double")
+            }
+            return number
+        }
+        set {
+            displayLabel.text! = newValue.clean
+        }
+    }
+    
     
     @IBAction func calcButtonPressed(_ sender: UIButton) {
         
@@ -21,14 +33,10 @@ class ViewController: UIViewController {
         
         isFinishedTypingNumber = true
         
-        guard let number = Double(displayLabel.text!) else {
-            fatalError("Cannot convert display label text to a Double")
-        }
-        
         guard let calculationMethod = sender.currentTitle else { fatalError() }
         
         if calculationMethod == "AC" {
-            displayLabel.text = "0"
+            displayValue = 0
         } else if calculationMethod == "+/-" {
             isFinishedTypingNumber = false
             if displayLabel.text!.starts(with: "-") {
@@ -37,7 +45,7 @@ class ViewController: UIViewController {
                 displayLabel.text! = "-" + displayLabel.text!
             }
         } else if calculationMethod == "%" {
-            displayLabel.text = (number / 100).clean
+            displayValue /= 100
         }
     }
     
@@ -45,23 +53,23 @@ class ViewController: UIViewController {
         
         //What should happen when a number is entered into the keypad
         
-        guard let numValue = sender.currentTitle else { fatalError() }
+        guard let buttonTitle = sender.currentTitle else { fatalError() }
         
-        if isFinishedTypingNumber && numValue == "." {
-            displayLabel.text = "0\(numValue)"
+        if isFinishedTypingNumber && buttonTitle == "." {
+            displayLabel.text = "0\(buttonTitle)"
             isFinishedTypingNumber = false
-        } else if isFinishedTypingNumber && numValue == "0" {
+        } else if isFinishedTypingNumber && buttonTitle == "0" {
             if displayLabel.text! == "0" {
                 return
             } else {
-                displayLabel.text = numValue
+                displayLabel.text = buttonTitle
                 return
             }
         } else if isFinishedTypingNumber {
-            displayLabel.text = numValue
+            displayLabel.text = buttonTitle
             isFinishedTypingNumber = false
         } else {
-            if numValue == "." {
+            if buttonTitle == "." {
                 for character in displayLabel.text! {
                     if character == "." {
                         return
@@ -69,7 +77,7 @@ class ViewController: UIViewController {
                 }
             }
             
-            displayLabel.text?.append(numValue)
+            displayLabel.text?.append(buttonTitle)
         }
     }
 

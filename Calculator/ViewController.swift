@@ -30,9 +30,14 @@ class ViewController: UIViewController {
         if calculationMethod == "AC" {
             displayLabel.text = "0"
         } else if calculationMethod == "+/-" {
-            displayLabel.text = String(number * -1)
+            isFinishedTypingNumber = false
+            if displayLabel.text!.starts(with: "-") {
+                displayLabel.text!.remove(at: displayLabel.text!.startIndex)
+            } else {
+                displayLabel.text! = "-" + displayLabel.text!
+            }
         } else if calculationMethod == "%" {
-            displayLabel.text = String(number / 100)
+            displayLabel.text = (number / 100).clean
         }
     }
     
@@ -70,3 +75,8 @@ class ViewController: UIViewController {
 
 }
 
+extension Double {
+    var clean: String {
+        return self.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", self) : String(self)
+    }
+}
